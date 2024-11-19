@@ -1,0 +1,13 @@
+# Python
+**/*.pyc
+**/__pycache__/
+
+# Flask
+**/flask_session/
+
+# Enviornments
+**/.env
+**/.venv
+
+# MacOS
+**/.DS_Store
