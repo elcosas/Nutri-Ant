@@ -7,7 +7,8 @@ app = Flask(__name__)
 @app.route('/', methods=['GET', 'POST'])
 def index() -> str:
     if request.method == 'POST':
-        pass
+        try: 
+        except:
     return render_template('index.html')
 
 
