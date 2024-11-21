@@ -30,3 +30,16 @@ button[aria-expanded="true"] .triangle {
 #navbar {
     transition: top 0.3s;
 }
+
+#meal-form {
+    padding: 20px
+}
+
+.form-select:invalid,
+        .form-check-input:invalid {
+            border-color: red;
+        }
+        #submissionMessage {
+            display: none;
+            margin-top: 15px;
+        }
