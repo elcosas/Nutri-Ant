@@ -1,3 +1,32 @@
 .darkZotBlue {
     background-color: #1B3D6D;
 }
+
+.about-section {
+    background-color: #eaeaec; 
+    padding: 20px;
+    border-radius: 5px; 
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+.triangle {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    margin-right: 5px;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 8px solid #000;
+    transition: transform 0.3s ease;
+}
+
+button[aria-expanded="true"] .triangle {
+    transform: rotate(180deg);
+}
+
+#navbar {
+    transition: top 0.3s;
+}
