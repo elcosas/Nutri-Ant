@@ -1,3 +1,3 @@
-# Hackathon Directory Template
+# Nutri-Ant
 
-Template for hackathon projects
+TODO
