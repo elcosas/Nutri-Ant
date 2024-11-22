@@ -1,10 +1,18 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 import urllib.request
 import json
+import re
 
 
 app = Flask(__name__)
 
+
+def parse_field_names(field_name: str) -> str:
+    words = re.findall(r'[A-Z][a-z]*|[a-z]+', field_name)
+    return ' '.join(word.capitalize() for word in words)
+
+app.jinja_env.filters['format_nutrients'] = parse_field_names
+    
 
 MEAL_ENUM = {
     'breakfast': 0,
@@ -29,9 +37,26 @@ def index() -> str:
             menu_items = process_post(dict(request.form))
         except Exception as e:
             error = f'Error processing request: {e}'
+        
         return render_template('index.html', menu_items=menu_items, error=error)
+
     return render_template('index.html')
 
+@app.route('/get_menu_items', methods=['POST'])
+def get_menu_items():
+    """
+    Endpoint to process form data and return rendered HTML of menu items.
+    """
+    form_data = request.form.to_dict()
+    try:
+        menu_items = process_post(form_data)
+        # Render a template with the menu items
+        rendered_items = render_template('meal_info.html', menu_items=menu_items)
+        return jsonify({'html': rendered_items})
+    except Exception as e:
+        # Render an error message
+        error_message = render_template('error.html', error=str(e))
+        return jsonify({'error': error_message}), 400
 
 @app.route('/about')
 def about() -> str:
@@ -178,5 +203,5 @@ def parse_menu_data(menu_json) -> list[dict[str, str]]:
  
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
  
