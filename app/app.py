@@ -1,9 +1,16 @@
-from flask import Flask, render_template, request, flash
+from flask import Flask, render_template, request
 import urllib.request
 import json
 
 
 app = Flask(__name__)
+
+
+MEAL_ENUM = {
+    'breakfast': 0,
+    'lunch': 1,
+    'dinner': 2,
+}
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -16,11 +23,13 @@ def index() -> str:
     of menu item dictionaries  processed from the request data
     '''
     if request.method == 'POST':
+        menu_items = None
+        error = None
         try:
-            menu_items = process_post(request.form)
+            menu_items = process_post(dict(request.form))
         except Exception as e:
-            flash(f'Error processing request: {e}', 'error')
-        return render_template('index.html', menu_items=menu_items)
+            error = f'Error processing request: {e}'
+        return render_template('index.html', menu_items=menu_items, error=error)
     return render_template('index.html')
 
 
@@ -48,7 +57,7 @@ def process_post(form) -> list[dict[str, str]]:
     '''
     validate(form)
 
-    menu_list: list[dict[str, str]] = query_zotmeal(form['location'], form['meal'])
+    menu_list: list[dict[str, str]] = query_zotmeal(form['location'], form['menu'])
     if not menu_list:
         raise ValueError('No menu data found from cache')
 
@@ -94,9 +103,9 @@ def calculate_bmr(sex: str, age: int, height: float, weight: float) -> float:
     returns a float
     '''
     if sex == 'male':
-        (6.23762 * weight) + (12.7084 * height) - (6.755 * age) + 66.473
+        return (6.23762 * weight) + (12.7084 * height) - (6.755 * age) + 66.473
     elif sex == 'female':
-        (4.33789 * weight) + (4.69798 * height) - (4.6756 * age) + 655.0955 
+        return (4.33789 * weight) + (4.69798 * height) - (4.6756 * age) + 655.0955 
     return -1.0
 
 
@@ -108,7 +117,9 @@ def get_dri_score(menu_item: dict[str, float], ideal: dict[str, float]) -> float
     '''
     total_percent_error = 0.0
     for key in ideal:
-        percent_error = (menu_item[key] - (ideal[key] / 3)) / (ideal[key] / 3)
+        if menu_item[key] == 'less than 1':
+            menu_item[key] = 0.0
+        percent_error = (float(menu_item[key]) - (ideal[key] / 3)) / (ideal[key] / 3)
         total_percent_error += abs(percent_error)
     return total_percent_error / 5
  
@@ -128,7 +139,7 @@ def get_menu(location: str, meal: str):
     Connects to the dinning api and returns back the alot of data for a given dinning hall
     '''
     base_url = "https://zotmeal-backend.vercel.app/"
-    endpoint = f"api?location={location}&meal={meal}"
+    endpoint = f"api?location={location}&meal={MEAL_ENUM[meal]}"
     url = f"{base_url}{endpoint}"
     try:
         with urllib.request.urlopen(url) as response:
@@ -153,6 +164,7 @@ def parse_menu_data(menu_json) -> list[dict[str, str]]:
     for station in menu_json["all"]:
         for category in station['menu']:
             for item in category["items"]:
+                # bro wtf is this
                 menu_item = {
                     'name': item["name"],
                     'calories': item['nutrition']["calories"] if 'calories' in item['nutrition'] else 0.0, 
@@ -168,36 +180,3 @@ def parse_menu_data(menu_json) -> list[dict[str, str]]:
 if __name__ == '__main__':
     app.run(debug=True)
  
-### Stupid test stuff ###
-
-@app.route('/')
-def main_page():
-    # Render the main page
-    return render_template('web-page.html')
-
-@app.route('/submit-health-data', methods=['POST'])
-def submit_health_data():
-    # TODO: Parse the JSON data sent by the client
-
-    data = request.get_json()
-    print(json.dumps(data, indent = 4)) # just printing out to terminal
-    # Perform backend logic (e.g., process form data, save to DB)
-    if not data:
-        return jsonify({'error': 'Invalid data'}), 400
-
-    # TODO: Item_list = some_function_here
-    # TODO: return render_template('about.html', items = item_list)
-    
-    return render_template('about.html', items = [item() for _ in range(10)])
-
-# currently just for testing 
-class item():
-    def __init__(self):
-        self.f1 = 'hii'
-        self.f2 = 'hii'
-        self.f3 = 'hii'
-        self.f4 = 'hii'
-        self.f5 = 'hii'
-    
-    def __repr__(self):
-        return f'Hi I am an item at {id(self)}'
