@@ -1,11 +1,25 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-</head>
-<body>
-  <h1>about.html</h1>
-</body>
-</html>
+{% if items %}
+  {% for item in items %}
+    <div class="container mt-5">
+      <section class="row justify-content-center">
+          <div class="col-md-8">
+              <article class="about-section">
+                  <h1 class="display-4" id='foods'>{{item}}:</h1>
+                  <button class="btn btn-link mt-3" data-bs-toggle="collapse" data-bs-target="#instructions{{ loop.index }}"
+                      aria-expanded="false" aria-controls="instructions{{ loop.index }}">
+                      <span class="triangle"></span>
+                  </button>
+                  <div class="collapse mt-3" id="instructions{{ loop.index }}">
+                      <p>
+                          This is text, this needs to be changed, should be detailed information, maybe put in
+                          another html file as another template lmao
+                      </p>
+                  </div>
+              </article>
+          </div>
+      </section>
+    </div>
+  {% endfor %}
+{% else %}
+<p>No items available</p>
+{% endif %}

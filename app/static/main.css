@@ -6,6 +6,7 @@
     background-color: #eaeaec; 
     padding: 20px;
     border-radius: 5px; 
+    margin: 5px
 }
 
 html {
@@ -43,3 +44,16 @@ button[aria-expanded="true"] .triangle {
             display: none;
             margin-top: 15px;
         }
+
+.meal-section {
+    background-color: #eaeaec; 
+    padding: 20px;
+    border-radius: 5px; 
+    min-height: 200px;
+    border-radius: 10px;
+}
+
+#healthForm {
+    margin-bottom: 200px;
+    margin-top: 200px
+}
