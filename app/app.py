@@ -35,6 +35,7 @@ def about() -> str:
 
 ### Helper functions ###
 
+
 def process_post(form) -> list[dict[str, str]]:
     '''
     Processes a POST request from the index route,
@@ -166,3 +167,37 @@ def parse_menu_data(menu_json) -> list[dict[str, str]]:
 
 if __name__ == '__main__':
     app.run(debug=True)
+ 
+### Stupid test stuff ###
+
+@app.route('/')
+def main_page():
+    # Render the main page
+    return render_template('web-page.html')
+
+@app.route('/submit-health-data', methods=['POST'])
+def submit_health_data():
+    # TODO: Parse the JSON data sent by the client
+
+    data = request.get_json()
+    print(json.dumps(data, indent = 4)) # just printing out to terminal
+    # Perform backend logic (e.g., process form data, save to DB)
+    if not data:
+        return jsonify({'error': 'Invalid data'}), 400
+
+    # TODO: Item_list = some_function_here
+    # TODO: return render_template('about.html', items = item_list)
+    
+    return render_template('about.html', items = [item() for _ in range(10)])
+
+# currently just for testing 
+class item():
+    def __init__(self):
+        self.f1 = 'hii'
+        self.f2 = 'hii'
+        self.f3 = 'hii'
+        self.f4 = 'hii'
+        self.f5 = 'hii'
+    
+    def __repr__(self):
+        return f'Hi I am an item at {id(self)}'
