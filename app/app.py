@@ -178,5 +178,5 @@ def parse_menu_data(menu_json) -> list[dict[str, str]]:
  
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()
  
