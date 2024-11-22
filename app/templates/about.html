@@ -1,25 +1,42 @@
+<!-- templates/your_template.html -->
 {% if items %}
-  {% for item in items %}
-    <div class="container mt-5">
-      <section class="row justify-content-center">
-          <div class="col-md-8">
-              <article class="about-section">
-                  <h1 class="display-4" id='foods'>{{item}}:</h1>
-                  <button class="btn btn-link mt-3" data-bs-toggle="collapse" data-bs-target="#instructions{{ loop.index }}"
-                      aria-expanded="false" aria-controls="instructions{{ loop.index }}">
-                      <span class="triangle"></span>
-                  </button>
-                  <div class="collapse mt-3" id="instructions{{ loop.index }}">
-                      <p>
-                          This is text, this needs to be changed, should be detailed information, maybe put in
-                          another html file as another template lmao
-                      </p>
-                  </div>
-              </article>
-          </div>
-      </section>
+{% for item in items %}
+<div class="custom-container mt-5">
+  <section class="row justify-content-center">
+    <div class="col-md-8">
+      <article class="about-section">
+        <h1 class="display-4 custom-heading" id="foods">
+          {{ item }}:
+        </h1>
+
+        <button class="toggle-button mt-3 rounded-pill" data-bs-toggle="collapse"
+          data-bs-target="#instructions{{ loop.index }}" aria-expanded="false"
+          aria-controls="instructions{{ loop.index }}">
+          View Details
+          <span class="triangle"></span>
+        </button>
+
+        <div class="collapse collapse-content mt-3" id="instructions{{ loop.index }}">
+          <p>
+          <ul class="list-unstyled">
+            {% for field, val in var(item).items() %}
+            <li class="d-inline-block me-3">{{ field }}: {{ val }}</li>
+            {% endfor %}
+          </ul>
+          </p>
+        </div>
+      </article>
     </div>
-  {% endfor %}
+  </section>
+</div>
+{% endfor %}
 {% else %}
-<p>No items available</p>
+<section class="no-items-section text-center my-5" aria-labelledby="no-items-heading">
+  <h2 id="no-items-heading" class="display-4 text-muted">
+    No Items Available
+  </h2>
+  <p class="lead mt-3">
+    Please check back later or contact support for more information.
+  </p>
+</section>
 {% endif %}
