@@ -5,47 +5,6 @@ Home
 {% endblock %}
 
 {% block main %}
-{% if menu_items %}
-<div class="container mt-4">
-  <div id="resultContainer" class="meal-section mt-4">
-    {% for item in menu_items %}
-    <div class="custom-container mt-5">
-      <section class="row justify-content-center">
-        <div class="col-md-8">
-          <article class="about-section">
-            <h4 class="custom-heading" id="foods">
-              {{ item['name'] }}:
-            </h4>
-
-            <button class="toggle-button mt-3 rounded-pill" data-bs-toggle="collapse"
-              data-bs-target="#instructions{{ loop.index }}" aria-expanded="false"
-              aria-controls="instructions{{ loop.index }}">
-              View Details
-              <span class="triangle"></span>
-            </button>
-
-            <div class="collapse collapse-content mt-3" id="instructions{{ loop.index }}">
-              <p>
-              <ul class="list-unstyled">
-                {% for field, val in item.items() %}
-                <li class="d-inline-block me-3">{{ field }}: {{ val }}</li>
-                {% endfor %}
-              </ul>
-              </p>
-            </div>
-          </article>
-        </div>
-      </section>
-    </div>
-    {% endfor %}
-  </div>
-</div>
-{% endif %}
-{% if error %}
-  <div class="alert alert-primary mb-0 text-center" role="alert">
-    {{ error }}
-  </div>
-{% endif%}
 <div class="container mt-4">
   <form id="healthForm" class="p-4 border rounded shadow-sm" action="/" method="post">
     <fieldset>
@@ -115,6 +74,10 @@ Home
   </form>
 </div>
 
+<div id="output">
+  <!-- Menu items or errors will be rendered here -->
+</div>
+
 <div class="container mt-5">
   <section class="row justify-content-center">
     <div class="col-md-8">
@@ -143,4 +106,32 @@ Home
     </div>
   </section>
 </div>
+
+<script>
+  document.getElementById('healthForm').addEventListener('submit', function(event) {
+      event.preventDefault(); // Prevent the default form submission behavior
+      const form = event.target;
+      const formData = new FormData(form);
+
+      // Send the form data to the backend asynchronously
+      fetch('/get_menu_items', {
+          method: 'POST',
+          body: formData,
+      })
+      .then(response => response.json())
+      .then(data => {
+          const outputDiv = document.getElementById('output');
+          if (data.error) {
+              // Display the error message
+              outputDiv.innerHTML = data.error;
+          } else if (data.html) {
+              // Display the rendered menu items
+              outputDiv.innerHTML = data.html;
+          }
+      })
+      .catch(error => {
+          console.error('Error:', error);
+      });
+  });
+</script>
 {% endblock %}

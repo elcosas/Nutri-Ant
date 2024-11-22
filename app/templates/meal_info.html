@@ -1,0 +1,41 @@
+{% if menu_items %}
+<div class="container mt-4">
+    <div id="resultContainer" class="meal-section mt-4">
+        {% for item in menu_items %}
+        <div class="custom-container mt-5">
+            <section class="row justify-content-center">
+                <div class="col-md-8">
+                    <article class="about-section">
+                        <h4 class="custom-heading" id="foods">
+                            {{ item['name'] }}:
+                        </h4>
+
+                        <button class="toggle-button mt-3 rounded-pill" data-bs-toggle="collapse"
+                            data-bs-target="#instructions{{ loop.index }}" aria-expanded="false"
+                            aria-controls="instructions{{ loop.index }}">
+                            View Details
+                            <span class="triangle"></span>
+                        </button>
+
+                        <div class="collapse collapse-content mt-3" id="instructions{{ loop.index }}">
+                            <p>
+                            <ul class="list-unstyled">
+                                {% for field, val in item.items() %}
+                                <li class="d-inline-block me-3">{{ field| format_nutrients}}: {{ val }}</li>
+                                {% endfor %}
+                            </ul>
+                            </p>
+                        </div>
+                    </article>
+                </div>
+            </section>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+{% if error %}
+<div class="alert alert-primary mb-0 text-center" role="alert">
+    {{ error }}
+</div>
+{% endif%}
